@@ -120,4 +120,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         // List<Employee> list = pageInfo.getList();
     }
 
+    /**
+     * 启用禁用员工账号
+     * @param id
+     * @param status
+     */
+    @Override
+    public void setStatus(Long id, Integer status) {
+        Employee employee = Employee.builder()
+                .id(id)
+                .status(status)
+                .build();
+
+        employeeMapper.update(employee);
+    }
+
 }
