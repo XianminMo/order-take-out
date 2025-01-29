@@ -49,4 +49,8 @@
         </where>
         order by create_time desc
     </select>
+
+    <select id="selectById" resultType="Employee">
+        select * from employee where id = #{id}
+    </select>
 </mapper>
