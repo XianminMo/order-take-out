@@ -27,4 +27,11 @@ public interface DishFlavorMapper {
      * @param dishIds
      */
     void deleteBatchById(List<Long> dishIds);
+
+    /**
+     * 根据dish_id查询对应的菜品口味
+     * @param dishId
+     * @return
+     */
+    List<DishFlavor> getByDishId(Long dishId);
 }

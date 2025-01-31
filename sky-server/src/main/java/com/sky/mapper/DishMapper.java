@@ -63,4 +63,10 @@ public interface DishMapper {
      * @param ids
      */
     void deleteBatchById(List<Long> ids);
+
+    /**
+     * 根据id动态修改菜品信息
+     * @param dish
+     */
+    void update(Dish dish);
 }
