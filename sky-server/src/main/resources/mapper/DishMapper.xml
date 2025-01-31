@@ -9,6 +9,14 @@
         VALUES (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{createTime},
                 #{updateTime}, #{createUser}, #{updateUser})
     </insert>
+
+    <delete id="deleteBatchById">
+        delete from dish where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <select id="pageQuery" resultType="dishVO">
         select d.id, d.name, d.category_id, price, image, description, d.status,
         d.update_time, c.name category_name
