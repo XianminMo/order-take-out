@@ -6,8 +6,30 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into dish (name, category_id, price, image, description,
                           create_time, update_time, create_user, update_user)
-            VALUES
-            (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{createTime},
+        VALUES (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{createTime},
                 #{updateTime}, #{createUser}, #{updateUser})
     </insert>
+    <select id="pageQuery" resultType="dishVO">
+        select d.id, d.name, d.category_id, price, image, description, d.status,
+        d.update_time, c.name category_name
+        from dish d
+        left outer join category c on d.category_id = c.id
+        <where>
+            <if test="name != null and name != ''">
+                and d.name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId != null">
+                and d.category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and d.status = #{status}
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>
+
+    <select id="getById" resultType="dish">
+        select * from dish where id = #{id}
+    </select>
+
 </mapper>

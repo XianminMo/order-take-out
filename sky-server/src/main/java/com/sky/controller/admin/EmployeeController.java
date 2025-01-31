@@ -79,6 +79,7 @@ public class EmployeeController {
 
     /**
      * 新增员工
+     *
      * @param employeeDTO
      * @return
      */
@@ -92,6 +93,7 @@ public class EmployeeController {
 
     /**
      * 分页查询
+     *
      * @param employeePageQueryDTO
      * @return
      */
@@ -105,6 +107,7 @@ public class EmployeeController {
 
     /**
      * 启用禁用员工账号
+     *
      * @param id
      * @param status
      * @return
@@ -119,6 +122,7 @@ public class EmployeeController {
 
     /**
      * 根据id查询员工信息
+     *
      * @param id
      * @return
      */
@@ -131,6 +135,7 @@ public class EmployeeController {
 
     /**
      * 编辑员工信息
+     *
      * @param employeeDTO
      * @return
      */
@@ -143,6 +148,7 @@ public class EmployeeController {
 
     /**
      * 修改密码
+     *
      * @param passwordEditDTO
      * @return
      */
