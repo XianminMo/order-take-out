@@ -7,7 +7,11 @@ import com.aliyun.oss.OSSException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -22,18 +26,21 @@ public class AliOssUtil {
     /**
      * 文件上传
      *
-     * @param bytes
-     * @param objectName
+     * @param file
      * @return
      */
-    public String upload(byte[] bytes, String objectName) {
+    public String upload(MultipartFile file) {
+        // 创建上传文件名
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String objectName = UUID.randomUUID() + extension;
 
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
 
         try {
             // 创建PutObject请求。
-            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(bytes));
+            ossClient.putObject(bucketName, objectName, new ByteArrayInputStream(file.getBytes()));
         } catch (OSSException oe) {
             System.out.println("Caught an OSSException, which means your request made it to OSS, "
                     + "but was rejected with an error response for some reason.");
@@ -46,6 +53,9 @@ public class AliOssUtil {
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.");
             System.out.println("Error Message:" + ce.getMessage());
+        } catch (IOException e) {
+            log.info("文件上传失败：{}", e.getMessage());
+            return null;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
