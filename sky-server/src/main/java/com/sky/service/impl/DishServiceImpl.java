@@ -35,6 +35,7 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
     /**
      * 新增菜品和对应的口味
      * @param dishDTO
@@ -64,7 +65,7 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
-     * 菜品分类查询
+     * 菜品分页查询
      * @param dishPageQueryDTO
      * @return
      */
