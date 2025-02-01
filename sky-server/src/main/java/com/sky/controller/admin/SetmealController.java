@@ -9,10 +9,10 @@ import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.sax.SAXResult;
 import java.util.List;
 
 @RestController
@@ -89,4 +89,23 @@ public class SetmealController {
         setmealService.updateWithDish(setmealDTO);
         return Result.success();
     }
+
+    /**
+     * 套餐起售、停售
+     * @param id
+     * @param status
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("套餐起售、停售")
+    public Result<String> startOrStop(Long id, @PathVariable Integer status) {
+        log.info("{}号套餐起售停售：{}", id, status);
+        setmealService.startOrStop(id, status);
+        return Result.success();
+    }
+
+
+
+
+
 }

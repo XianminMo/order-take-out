@@ -8,6 +8,8 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
@@ -29,6 +31,10 @@ public class SetmealServiceImpl implements SetmealService {
     private  SetmealMapper setmealMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+    @Autowired
+    private SetmealService setmealService;
+    @Autowired
+    private DishMapper dishMapper;
 
 
     /**
@@ -140,5 +146,32 @@ public class SetmealServiceImpl implements SetmealService {
             setmealDish.setSetmealId(setmealDTO.getId());
         });
         setmealDishMapper.insertBatch(setmealDishes);
+    }
+
+    /**
+     * 套餐起售、停售
+     *
+     * @param id
+     * @param status
+     */
+    @Override
+    public void startOrStop(Long id, Integer status) {
+        List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealId(id);
+
+        // 如果要起售套餐且套餐内有未起售菜品，抛出异常
+        if (status == 1) {
+            for (SetmealDish setmealDish : setmealDishes) {
+                if (dishMapper.getById(setmealDish.getDishId()).getStatus() == 0) {
+                    throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                }
+            }
+        }
+
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+
+        setmealMapper.update(setmeal);
     }
 }
