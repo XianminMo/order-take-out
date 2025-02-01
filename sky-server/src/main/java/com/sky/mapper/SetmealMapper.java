@@ -49,4 +49,10 @@ public interface SetmealMapper {
      * @param ids
      */
     void deleteBatchById(List<Long> ids);
+
+    /**
+     * 根据id动态修改套餐信息
+     * @param setmeal
+     */
+    void update(Setmeal setmeal);
 }

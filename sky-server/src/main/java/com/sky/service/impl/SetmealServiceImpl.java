@@ -13,13 +13,12 @@ import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
-import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -42,8 +41,9 @@ public class SetmealServiceImpl implements SetmealService {
         // 添加套餐至 setmeal table
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO, setmeal);
-        // 设置为起售状态
-        setmeal.setStatus(1);
+
+        // 新建套餐默认设置为停售状态，起售需要手动操作（在套餐起售停售那个接口判断包含的菜品是否都处于起售状态）
+        setmeal.setStatus(0);
         setmealMapper.insert(setmeal);
 
         Long setmealId = setmeal.getId();
@@ -104,7 +104,7 @@ public class SetmealServiceImpl implements SetmealService {
     @Override
     public SetmealVO getById(Long id) {
         SetmealVO setmealVO = new SetmealVO();
-        
+
         // 查询套餐基本信息
         Setmeal setmeal = setmealMapper.getById(id);
         BeanUtils.copyProperties(setmeal, setmealVO);
@@ -115,5 +115,30 @@ public class SetmealServiceImpl implements SetmealService {
         // 组装
         setmealVO.setSetmealDishes(setmealDishes);
         return setmealVO;
+    }
+
+    /**
+     * 修改套餐信息以及菜品-套餐关联信息
+     *
+     * @param setmealDTO
+     */
+    @Override
+    public void updateWithDish(SetmealDTO setmealDTO) {
+        // 修改套餐信息
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        setmealMapper.update(setmeal);
+
+        // 修改菜品-套餐关联信息
+        // 1. 删除所有该套餐与菜品的关联信息
+        setmealDishMapper.deleteBatchBySetmealId(Collections.singletonList(setmealDTO.getId()));
+
+        // 2. 重新根据setmealDTO的setmealId插入
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        // 设置套餐id
+        setmealDishes.forEach(setmealDish -> {
+            setmealDish.setSetmealId(setmealDTO.getId());
+        });
+        setmealDishMapper.insertBatch(setmealDishes);
     }
 }
