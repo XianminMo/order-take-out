@@ -114,9 +114,9 @@ public class EmployeeController {
      */
     @PostMapping("/status/{status}")
     @ApiOperation("启用禁用员工账号")
-    public Result<String> setStatus(Long id, @PathVariable Integer status) {
+    public Result<String> startOrStop(Long id, @PathVariable Integer status) {
         log.info("设置{}号员工状态为{}", id, status);
-        employeeService.setStatus(id, status);
+        employeeService.startOrStop(id, status);
         return Result.success();
     }
 

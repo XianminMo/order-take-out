@@ -1,0 +1,52 @@
+package com.sky.service.impl;
+
+import com.sky.dto.SetmealDTO;
+import com.sky.entity.Setmeal;
+import com.sky.entity.SetmealDish;
+import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.SetmealMapper;
+import com.sky.service.SetmealService;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@Slf4j
+public class SetmealServiceImpl implements SetmealService {
+
+    @Autowired
+    private  SetmealMapper setmealMapper;
+    @Autowired
+    private SetmealDishMapper setmealDishMapper;
+
+
+    /**
+     * 新增套餐
+     *
+     * @param setmealDTO
+     */
+    @Override
+    public void save(SetmealDTO setmealDTO) {
+        // 添加套餐至 setmeal table
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        // 设置为起售状态
+        setmeal.setStatus(1);
+        setmealMapper.insert(setmeal);
+
+        Long setmealId = setmeal.getId();
+
+        // 添加菜品-套餐关联 -> setmeal_dish
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        // 设置套餐id
+        setmealDishes.forEach(setmealDish -> {
+            setmealDish.setSetmealId(setmealId);
+        });
+        setmealDishMapper.insertBatch(setmealDishes);
+
+    }
+}

@@ -128,7 +128,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param status
      */
     @Override
-    public void setStatus(Long id, Integer status) {
+    public void startOrStop(Long id, Integer status) {
         Employee employee = Employee.builder()
                 .id(id)
                 .status(status)
