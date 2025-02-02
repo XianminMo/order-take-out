@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+
     /**
      * 微信登录
      *
@@ -38,18 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User wxLogin(UserLoginDTO userLoginDTO) {
         // 通过微信接口服务获取openid
-        Map<String, String> params = new HashMap<>();
-        params.put("appid", weChatProperties.getAppid());
-        params.put("secret", weChatProperties.getSecret());
-        params.put("js_code", userLoginDTO.getCode());
-        params.put("grant_type", "authorization_code");
-
-        // 发送GET请求到微信登录接口，获取返回的JSON字符串
-        String json = HttpClientUtil.doGet(WX_LOGIN_URL, params);
-        // 将返回的JSON字符串解析成JSON对象格式
-        JSONObject jsonObject = JSON.parseObject(json);
-        // 从JSON对象中获取openid字段的值
-        String openid = jsonObject.getString("openid");
+        String openid = getOpenId(userLoginDTO.getCode());
 
         // 判断openid是否为空，如果为空表示登陆失败，抛出业务异常
         if (openid == null) {
@@ -70,5 +60,27 @@ public class UserServiceImpl implements UserService {
 
         // 返回用户对象
         return user;
+    }
+
+    /**
+     * 访问微信接口服务，获取openid
+     * @param code
+     * @return
+     */
+    private String getOpenId(String code) {
+        // 通过微信接口服务获取openid
+        Map<String, String> params = new HashMap<>();
+        params.put("appid", weChatProperties.getAppid());
+        params.put("secret", weChatProperties.getSecret());
+        params.put("js_code", code);
+        params.put("grant_type", "authorization_code");
+
+        // 发送GET请求到微信登录接口，获取返回的JSON字符串
+        String json = HttpClientUtil.doGet(WX_LOGIN_URL, params);
+        // 将返回的JSON字符串解析成JSON对象格式
+        JSONObject jsonObject = JSON.parseObject(json);
+        // 从JSON对象中获取openid字段的值
+        String openid = jsonObject.getString("openid");
+        return openid;
     }
 }
